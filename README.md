@@ -1,4 +1,6 @@
-# My Personal Dashboard
+# healthkit-sync
+
+[![ci](https://github.com/vishalkotak/healthkit-sync/actions/workflows/ci.yml/badge.svg)](https://github.com/vishalkotak/healthkit-sync/actions/workflows/ci.yml)
 
 My Apple Health data, in a database I own, with a dashboard that runs on my own Mac.
 
