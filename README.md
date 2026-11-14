@@ -7,7 +7,7 @@ There are two halves to this repo:
 - **[`apple-health-sync/`](./apple-health-sync)**: a small iPhone app that quietly copies Apple Health data (all 189 sample types: activity, heart, sleep, nutrition, symptoms, vitals and the rest) into my own Supabase Postgres database, in the background. It has its own README with the full setup.
 - **[`dashboard/`](./dashboard)**: a local web dashboard to explore that data. It's a small Python API and a React page, both running on `127.0.0.1`, reading the database through a login that can only read.
 
-I built it because I wanted my health data somewhere I control and can query, without a subscription and without it passing through anyone else's servers. This repo used to hold an older WHOOP dashboard. I don't use WHOOP any more, so I removed that code. It's still in the git history if you want it.
+I built it because I wanted my health data somewhere I control and can query, without a subscription and without it passing through anyone else's servers.
 
 ---
 
@@ -51,7 +51,7 @@ Or from `dashboard/`: `make demo`, `make dev`, `make stop`, `make test`.
 
 This assumes the iPhone app is already syncing into your Supabase project (see [its README](./apple-health-sync/README.md)).
 
-1. **Create the read-only login.** Make a strong password with `openssl rand -hex 32`. (`-hex` gives you only 0–9 and a–f, so it never needs URL-escaping. `openssl rand -base64 32` works too, but then you have to URL-encode `/`, `+` and `=`.) Open [`dashboard/sql/readonly_role.sql`](./dashboard/sql/readonly_role.sql), paste the password where it says `REPLACE_WITH_A_STRONG_PASSWORD`, and run the file in Supabase → SQL Editor. Afterwards, close the tab without saving it, so the password doesn't sit in your saved snippets. The script refuses to run while the placeholder is still there.
+1. **Create the read-only login.** Make a strong password with `openssl rand -hex 32`. (`-hex` gives you only 0 to 9 and a to f, so it never needs URL-escaping. `openssl rand -base64 32` works too, but then you have to URL-encode `/`, `+` and `=`.) Open [`dashboard/sql/readonly_role.sql`](./dashboard/sql/readonly_role.sql), paste the password where it says `REPLACE_WITH_A_STRONG_PASSWORD`, and run the file in Supabase → SQL Editor. Afterwards, close the tab without saving it, so the password doesn't sit in your saved snippets. The script refuses to run while the placeholder is still there.
 2. **Create `dashboard/.env`** from the example. It's gitignored.
    ```bash
    cp dashboard/.env.example dashboard/.env
@@ -99,7 +99,7 @@ iPhone (HealthKit) ──HealthSync app──▶ Supabase Postgres: public.healt
 
 ## The double-counting caveat (please read)
 
-The iPhone app uploads every raw sample from **every** source (the iPhone itself *and* the Apple Watch), but not which device each one came from. If you walk with both, both record the same steps. A plain `SUM(value)` would count them twice. In the demo data, which copies that pattern, the raw step sum is typically 40–100% too high (median about 70%).
+The iPhone app uploads every raw sample from **every** source (the iPhone itself *and* the Apple Watch), but not which device each one came from. If you walk with both, both record the same steps. A plain `SUM(value)` would count them twice. In the demo data, which copies that pattern, the raw step sum is typically 40 to 100% too high (median about 70%).
 
 Apple's Health app gets around this by choosing one source at a time from a priority list. Without the source, the dashboard does the next best thing:
 
