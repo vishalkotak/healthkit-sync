@@ -4,10 +4,11 @@
 
 My Apple Health data, in a database I own, with a dashboard that runs on my own Mac.
 
-There are two halves to this repo:
+There are three parts to this repo:
 
 - **[`apple-health-sync/`](./apple-health-sync)**: a small iPhone app that quietly copies Apple Health data (all 189 sample types: activity, heart, sleep, nutrition, symptoms, vitals and the rest) into my own Supabase Postgres database, in the background. It has its own README with the full setup.
 - **[`dashboard/`](./dashboard)**: a local web dashboard to explore that data. It's a small Python API and a React page, both running on `127.0.0.1`, reading the database through a login that can only read.
+- **[`health-llm/`](./health-llm)**: the dashboard's Coach as a small model that runs on the Mac. Qwen3.5-0.8B, fine-tuned with LoRA in PyTorch on Claude Haiku's answers to synthetic questions, so no real health data ever reaches the teacher. The full story, with the mistakes, is in [its write-up](./health-llm/docs/WRITEUP.md).
 
 I built it because I wanted my health data somewhere I control and can query, without a subscription and without it passing through anyone else's servers.
 
