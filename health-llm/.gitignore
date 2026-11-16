@@ -1,0 +1,12 @@
+data/
+models/
+papers/
+.venv/
+__pycache__/
+*.safetensors
+
+# Media showing real health numbers stays local; only redacted media is committed.
+docs/screenshots/*
+!docs/screenshots/coach-film.mp4
+!docs/screenshots/coach-film-poster.png
+!docs/screenshots/coach-storyboard-redacted.png
