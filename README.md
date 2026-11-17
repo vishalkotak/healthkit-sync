@@ -8,7 +8,7 @@ There are three parts to this repo:
 
 - **[`apple-health-sync/`](./apple-health-sync)**: a small iPhone app that quietly copies Apple Health data (all 189 sample types: activity, heart, sleep, nutrition, symptoms, vitals and the rest) into my own Supabase Postgres database, in the background. It has its own README with the full setup.
 - **[`dashboard/`](./dashboard)**: a local web dashboard to explore that data. It's a small Python API and a React page, both running on `127.0.0.1`, reading the database through a login that can only read.
-- **[`health-llm/`](./health-llm)**: the dashboard's Coach as a small model that runs on the Mac. Qwen3.5-0.8B, fine-tuned with LoRA in PyTorch on Claude Haiku's answers to synthetic questions, so no real health data ever reaches the teacher. The full story, with the mistakes, is in [its write-up](./health-llm/docs/WRITEUP.md).
+- **[`health-llm/`](./health-llm)**: the dashboard's Coach as a small model that runs on the Mac. Qwen3.5-0.8B, fine-tuned with LoRA in PyTorch on Claude Haiku's answers to synthetic questions, so no real health data ever reaches the teacher. On 112 held-out questions it passes every quality check 93% of the time, up from 46% for the base model. The full story, with the mistakes, is in [its write-up](./health-llm/docs/WRITEUP.md).
 
 I built it because I wanted my health data somewhere I control and can query, without a subscription and without it passing through anyone else's servers.
 
@@ -34,6 +34,10 @@ These come from demo mode, so the numbers are made up.
 |---|---|
 | ![Workouts](docs/screenshots/workouts-dark.png) | ![Explore](docs/screenshots/explore-light.png) |
 
+[![Coach, running on the Mac. Personal numbers redacted.](health-llm/docs/screenshots/coach-film-poster.png)](health-llm/docs/screenshots/coach-film.mp4)
+
+<sub>Coach, running on the Mac. Click for the 35-second demo.</sub>
+
 ## Try it in two minutes (demo mode)
 
 You don't need a database, an iPhone, or any credentials for this. Demo mode serves about a year of realistic, made-up data. It's generated the same way every time, and it's messy on purpose (overlapping iPhone and Watch samples) so the clean-up logic has something to do.
@@ -41,8 +45,8 @@ You don't need a database, an iPhone, or any credentials for this. Demo mode ser
 You need Python 3.11+ and Node 20.19+ (on a Mac: `brew install python@3.12 node`).
 
 ```bash
-git clone https://github.com/vishalkotak/my-personal-dashboard.git
-cd my-personal-dashboard
+git clone https://github.com/vishalkotak/healthkit-sync.git
+cd healthkit-sync
 DEMO=1 ./dashboard/start.sh      # first run installs dependencies, then prints the URL
 open http://localhost:5173
 ./dashboard/stop.sh              # when you're done
@@ -131,7 +135,7 @@ The iPhone app uploads every raw sample from **every** source (the iPhone itself
 
 Apple's Health app gets around this by choosing one source at a time from a priority list. Without the source, the dashboard does the next best thing:
 
-- **Steps, distance, energy, and every other type that adds up:** time is cut into small slices at every sample boundary. Within each slice, a sample's value is assumed to be spread evenly over its own duration. When samples overlap, the dashboard takes the **largest** of their rates instead of adding them together. For a single device, that's exactly the plain sum. For two devices, the overlapping stretch is counted once, using whichever device saw more. It can come out a little high compared with Apple (it takes the max rather than a fixed priority), which is why those numbers are labelled **approximate** everywhere, and why hovering a bar shows the raw, double-counted sum next to it.
+- **Steps, distance, energy, and every other type that adds up:** time is cut into small slices at every sample boundary. Within each slice, a sample's value is assumed to be spread evenly over its own duration. When samples overlap, the dashboard takes the **largest** of their rates instead of adding them together. For a single device, that's exactly the plain sum. For two devices, the overlapping stretch is counted once, using whichever device saw more. It can come out a little high compared with Apple, because it takes the max rather than a fixed priority.
 - **Sleep:** samples from several sources can overlap too, like the iPhone's coarse "in bed" block and the Watch's stages. Each slice gets the most specific label available: deep > REM > core > awake > asleep (no stage) > in bed. "In bed" is the union of everything.
 - **Blood pressure:** systolic and diastolic readings are paired when they share exactly the same timestamp. Readings without a partner are counted and mentioned, but not plotted.
 
@@ -159,4 +163,4 @@ To regenerate the screenshots, start demo mode with a pinned clock (`DEMO=1 DEMO
 
 ## License
 
-MIT, see [LICENSE](LICENSE). It covers the whole repository: the iPhone app and the dashboard. Use it, fork it, make it yours.
+MIT, see [LICENSE](LICENSE). It covers the whole repository: the iPhone app, the dashboard and health-llm. Use it, fork it, make it yours.
